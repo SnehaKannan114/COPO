@@ -133,7 +133,7 @@ class PDF extends FPDF
 
 	function COsection($conn, $row)
 	{
-		$sql = "SELECT * FROM courseoutcome where coursecode = ?";
+		$sql = "SELECT * FROM courseoutcome where coursecode = ? and section = ? and year = ?";
  
 		//$this->Cell(150, 8, $sql,1, 0, 'C');
 		//$this->Cell(150, 8, $row["coursecode"],1, 1, 'L');
@@ -142,7 +142,7 @@ class PDF extends FPDF
         if($stmt = mysqli_prepare($conn, $sql))
         {
 	        // Bind variables to the prepared statement as parameters
-	        mysqli_stmt_bind_param($stmt, "s", $row["coursecode"]);
+	        mysqli_stmt_bind_param($stmt, "ssd", $row["coursecode"], $row["section"], $row["year"]);
 	        mysqli_stmt_execute($stmt);
 	        $result = mysqli_stmt_get_result($stmt);
 	        //echo mysqli_num_rows($result);
@@ -211,7 +211,7 @@ class PDF extends FPDF
 		$noOfCOs = 0;
         for($rowCnt = 1; $rowCnt < 9; $rowCnt++)
 		{
-			$sql = "SELECT * FROM copo where coursecode = ? and cono = ?" ;
+			$sql = "SELECT * FROM copo where coursecode = ? and section = ? and year = ? and cono = ?" ;
 	 
 			//$this->Cell(150, 8, $sql,1, 0, 'C');
 			//$this->Cell(150, 8, $row["coursecode"],1, 1, 'L');
@@ -220,7 +220,7 @@ class PDF extends FPDF
 	        if($stmt = mysqli_prepare($conn, $sql))
 	        {
 		        // Bind variables to the prepared statement as parameters
-		        mysqli_stmt_bind_param($stmt, "sd", $row["coursecode"], $rowCnt);
+		        mysqli_stmt_bind_param($stmt, "ssdd", $row["coursecode"], $row["section"], $row["year"], $rowCnt);
 		        mysqli_stmt_execute($stmt);
 		        $result = mysqli_stmt_get_result($stmt);
 		        //echo mysqli_num_rows($result);
@@ -295,11 +295,11 @@ class PDF extends FPDF
 
 	function Assessment($conn, $row)
 	{
-		$sql = "SELECT * FROM assesmenttool where coursecode = ?";
+		$sql = "SELECT * FROM assesmenttool where coursecode = ? and section = ? and year = ?";
         if($stmt = mysqli_prepare($conn, $sql))
         {
 	        // Bind variables to the prepared statement as parameters
-	        mysqli_stmt_bind_param($stmt, "s", $row["coursecode"]);
+	        mysqli_stmt_bind_param($stmt, "ssd", $row["coursecode"], $row["section"], $row["year"]);
 	        mysqli_stmt_execute($stmt);
 	        $result = mysqli_stmt_get_result($stmt);
 	        //echo mysqli_num_rows($result);
@@ -327,7 +327,6 @@ class PDF extends FPDF
 					$noOfTests++;
 				if($testRow["aat"]!=0)
 					$noOfTests++;
-
 
 				$this->Cell(12);
 				$this->Cell(14, 22 + 8*$noOfTests,"",1, 0, 'C');
@@ -404,11 +403,384 @@ class PDF extends FPDF
 		}
 	}
 
+	function AToolsCOMapping($conn, $row)
+	{
+		$sql = "SELECT * FROM atoolmapping where coursecode = ? and section = ? and year = ?";
+		if($stmt = mysqli_prepare($conn, $sql))
+        {
+	        // Bind variables to the prepared statement as parameters
+	        mysqli_stmt_bind_param($stmt, "ssd", $row["coursecode"], $row["section"], $row["year"]);
+	        mysqli_stmt_execute($stmt);
+	        $result = mysqli_stmt_get_result($stmt);
+	        //echo mysqli_num_rows($result);
+	        if(mysqli_num_rows($result) > 0)
+	        {
+	        	//section header
+	        	$this->Ln(2);
+				$this->Cell(12);
+				$this->SetFont('Arial', 'B', 11);
+				$this->Cell(14, 6, "D",1, 0, 'C');
+				$this->Cell(155, 6, "Assessment Tool Mapping to CO",1, 1, 'L');
+
+				$noOfTests = mysqli_num_rows($result);
+				$this->Cell(12);
+
+				$this->Cell(14, 12 + 6*$noOfTests,"",1,0);
+				$this->Cell(155, 12 + 6*$noOfTests,"",1,0);
+				
+				
+				$this->Ln(2);
+				$this->Cell(28);
+				$this->SetFont('Arial', 'B', 11);
+				$this->Cell(15, 6,"", 1, 0, 'C');
+				$this->Cell(15, 6, "C01", 1, 0, 'C');
+				$this->Cell(15, 6, "CO2", 1, 0, 'C');
+				$this->Cell(15, 6, "CO3", 1, 0, 'C');
+				$this->Cell(15, 6, "CO4", 1, 0, 'C');
+				$this->Cell(15, 6, "CO5", 1, 0, 'C');
+				$this->Cell(15, 6, "CO6", 1, 0, 'C');
+				$this->Cell(15, 6, "CO7", 1, 0, 'C');
+				$this->Cell(15, 6, "CO8", 1, 0, 'C');
+				$this->Cell(15, 6, "Total", 1, 1, 'Cell');
+				//$this->Ln(8);
+				$total = 0;
+				while($testRow = $result->fetch_assoc()) 
+			    {
+			    	$this->Ln(0);
+					$this->Cell(28);
+					$this->SetFont('Arial', 'B', 11);
+					$this->Cell(15, 6, $testRow["test"], 1, 0, 'C');
+					for($colCnt = 1; $colCnt < 9; $colCnt++)
+					{
+						$this->Cell(15, 6, $testRow["co{$colCnt}"], 1, 0, 'C');
+						if($testRow["co{$colCnt}"] > 0)
+							$total += $testRow["co{$colCnt}"];
+					}
+					$this->Cell(15, 6, $total, 1, 0, 'C');
+				}
+				$this->Ln(8);
+			}
+		}
+		else
+		{
+			$this->Cell(20, 8, "Error in connection. Please try again",1, 0, 'C');
+		}
+	}
+
+	function max($a, $b)
+	{
+		if($a>$b)
+			return $a;
+		else
+			return $b;
+	}
+
+
+
+	function LectureSchedule($conn, $row)
+	{
+		$sql = "SELECT * FROM lectureschedule where coursecode = ? and section = ? and year = ?";
+		if($stmt = mysqli_prepare($conn, $sql))
+        {
+	        // Bind variables to the prepared statement as parameters
+	        mysqli_stmt_bind_param($stmt, "ssd", $row["coursecode"], $row["section"], $row["year"]);
+	        mysqli_stmt_execute($stmt);
+	        $result = mysqli_stmt_get_result($stmt);
+	        //echo mysqli_num_rows($result);
+	        if(mysqli_num_rows($result) > 0)
+	        {
+	        	//section header
+	        	$this->Ln(2);
+				$this->Cell(12);
+				$this->SetFont('Arial', 'B', 11);
+				$this->Cell(14, 6, "E",1, 0, 'C');
+				$this->Cell(155, 6, "Lecture Schedule",1, 1, 'L');
+
+				$noOfLectures = mysqli_num_rows($result);
+				$this->Cell(12);
+
+				$topleftX = $this->GetX();
+				$this->Cell(14, 12 + 6*$noOfLectures,"",0,0);
+				$this->Cell(155, 12 + 6*$noOfLectures,"",0,0);
+				
+				$topY = $this->GetY();
+
+				$this->Ln(2);
+				$this->Cell(28);
+				$this->SetFont('Arial', 'B', 11);
+				$this->Cell(20, 6,"Lecture #", 1, 0, 'C');
+				$this->Cell(20, 6, "Unit #", 1, 0, 'C');
+				$this->Cell(60, 6, "Topic", 1, 0, 'C');
+				$this->MultiCell(50, 6, "Remarks", 1);
+				//$this->Ln(8);
+						
+				while($lectureRow = $result->fetch_assoc()) 
+			    {
+			    	$this->Ln(0);
+					$this->Cell(28);
+					$this->SetFont('Arial', 'B', 11);
+					$this->Cell(20, 6, $lectureRow["lno"], 1, 0, 'C');
+					$this->Cell(20, 6, $lectureRow["uno"], 1, 0, 'C');
+					$this->SetFont('Arial', '', 10);
+					$x=$this->GetX();
+					$y=$this->GetY();
+					$this->MultiCell(60, 6, $lectureRow["topic"], 1);
+					$row3Y=$this->GetY();
+					//$this->Cell(50, 8, $lectureRow["remarks"], 1, 0, 'C');
+					$this->SetXY($x+60,$y);
+					$this->MultiCell(50, 6, $lectureRow["remarks"], 1);
+					$x=$this->GetX();
+					$row4Y=$this->GetY();
+					$maxY = $this->max($row3Y, $row4Y);
+					$this->SetXY($x, $maxY);
+					//$this->SetFont('Arial', '', 9);
+					//$this->MultiCell(130, 8, $lectureRow["co{$rowCnt}"],1);
+				}
+				$this->Ln(0);
+				$x=$this->GetX()+12;
+				$y=$maxY;
+				$this->SetXY($x,$x-4);
+				$this->Line($topleftX, $topY, $x, $y+2);
+				$this->Line($topleftX+14, $topY, $x+14, $y+2);
+				$this->Line($topleftX+169, $topY, $x+169, $y+2);
+				$this->Line($topleftX, $topY, $topleftX+169, $topY);
+				$this->Line($x, $y+2, $x+169, $y+2);
+				$this->SetXY($x,$y+2);
+				
+			}
+		}
+		else
+		{
+			$this->Cell(20, 8, "Error in connection. Please try again",1, 0, 'C');
+		}
+	}
+
+
+	function Tutorials($conn, $row)
+	{
+		$sql = "SELECT * FROM tutorial where coursecode = ? and section = ? and year = ?";
+		if($stmt = mysqli_prepare($conn, $sql))
+        {
+	        // Bind variables to the prepared statement as parameters
+	        mysqli_stmt_bind_param($stmt, "ssd", $row["coursecode"], $row["section"], $row["year"]);
+	        mysqli_stmt_execute($stmt);
+	        $result = mysqli_stmt_get_result($stmt);
+	        //echo mysqli_num_rows($result);
+	        if(mysqli_num_rows($result) > 0)
+	        {
+	        	//section header
+	        	$this->Ln(0);
+				$this->Cell(12);
+				$this->SetFont('Arial', 'B', 11);
+				$this->Cell(14, 6, "F",1, 0, 'C');
+				$this->Cell(155, 6, "Tutorials",1, 1, 'L');
+
+				$noOfTutorials = mysqli_num_rows($result);
+				$this->Cell(12);
+
+				$topleftX = $this->GetX();
+				$topY = $this->GetY();
+				$this->Cell(14, 12 + 6*$noOfTutorials,"",0,0);
+				$this->Cell(155, 12 + 6*$noOfTutorials,"",0,0);
+				
+				
+				
+				$this->Ln(2);
+				$this->Cell(28);
+				$this->SetFont('Arial', 'B', 11);
+				$this->Cell(20, 6,"Tutorial #", 1, 0, 'C');
+				$this->Cell(20, 6, "Unit #", 1, 0, 'C');
+				$this->Cell(60, 6, "Topic", 1, 0, 'C');
+				$this->MultiCell(50, 6, "Remarks/Skill Addressed", 1);
+				//$this->Ln(8);
+						
+				while($tutorialRow = $result->fetch_assoc()) 
+			    {
+			    	$this->Ln(0);
+					$this->Cell(28);
+					$this->SetFont('Arial', 'B', 11);
+					$this->Cell(20, 6, $tutorialRow["tno"], 1, 0, 'C');
+					$this->Cell(20, 6, $tutorialRow["uno"], 1, 0, 'C');
+					$this->SetFont('Arial', '', 10);
+					$x=$this->GetX();
+					$y=$this->GetY();
+					$this->MultiCell(60, 6, $tutorialRow["topic"], 1);
+					$row3Y=$this->GetY();
+					//$this->Cell(50, 8, $lectureRow["remarks"], 1, 0, 'C');
+					$this->SetXY($x+60,$y);
+					$this->MultiCell(50, 6, $tutorialRow["remarks"], 1);
+					$x=$this->GetX();
+					$row4Y=$this->GetY();
+					$maxY = $this->max($row3Y, $row4Y);
+					$this->SetXY($x, $maxY);
+					//$this->SetFont('Arial', '', 9);
+					//$this->MultiCell(130, 8, $lectureRow["co{$rowCnt}"],1);
+				}
+				$this->Ln(0);
+				$x=$this->GetX()+12;
+				$y=$maxY;
+				$this->SetXY($x,$x-4);
+				$this->Line($topleftX, $topY, $x, $y+2);
+				$this->Line($topleftX+14, $topY, $x+14, $y+2);
+				$this->Line($topleftX+169, $topY, $x+169, $y+2);
+				$this->Line($x, $y+2, $x+169, $y+2);
+				$this->SetXY($x,$y+2);
+				
+			}
+		}
+		else
+		{
+			$this->Cell(20, 8, "Error in connection. Please try again",1, 0, 'C');
+		}
+	}
+
+	function Laboratory($conn, $row)
+	{
+		$sql = "SELECT * FROM laboratory where coursecode = ? and section = ? and year = ?";
+		if($stmt = mysqli_prepare($conn, $sql))
+        {
+	        // Bind variables to the prepared statement as parameters
+	        mysqli_stmt_bind_param($stmt, "ssd", $row["coursecode"], $row["section"], $row["year"]);
+	        mysqli_stmt_execute($stmt);
+	        $result = mysqli_stmt_get_result($stmt);
+	        //echo mysqli_num_rows($result);
+	        if(mysqli_num_rows($result) > 0)
+	        {
+	        	//section header
+	        	$this->Ln(0);
+				$this->Cell(12);
+				$this->SetFont('Arial', 'B', 11);
+				$this->Cell(14, 6, "F",1, 0, 'C');
+				$this->Cell(155, 6, "Laboratory",1, 1, 'L');
+
+				$noOfLabs = mysqli_num_rows($result);
+				$this->Cell(12);
+
+				$topleftX = $this->GetX();
+				$topY = $this->GetY();
+				$this->Cell(14, 12 + 6*$noOfLabs,"",0,0);
+				$this->Cell(155, 12 + 6*$noOfLabs,"",0,0);
+				
+				
+				$this->Ln(2);
+				$this->Cell(28);
+				$this->SetFont('Arial', 'B', 11);
+				$this->Cell(25, 6,"Experiment #", 1, 0, 'C');
+				$this->Cell(20, 6, "Unit #", 1, 0, 'C');
+				$this->Cell(55, 6, "Topic", 1, 0, 'C');
+				$this->MultiCell(50, 6, "Remarks/Skill Addressed", 1);
+				//$this->Ln(8);
+						
+				while($labRow = $result->fetch_assoc()) 
+			    {
+			    	$this->Ln(0);
+					$this->Cell(28);
+					$this->SetFont('Arial', 'B', 11);
+					$this->Cell(25, 6, $labRow["lno"], 1, 0, 'C');
+					$this->Cell(20, 6, $labRow["uno"], 1, 0, 'C');
+					$this->SetFont('Arial', '', 10);
+					$x=$this->GetX();
+					$y=$this->GetY();
+					$this->MultiCell(55, 6, $labRow["name"], 1);
+					$row3Y=$this->GetY();
+					//$this->Cell(50, 8, $lectureRow["remarks"], 1, 0, 'C');
+					$this->SetXY($x+55,$y);
+					$this->MultiCell(50, 6, $labRow["remarks"], 1);
+					$x=$this->GetX();
+					$row4Y=$this->GetY();
+					$maxY = $this->max($row3Y, $row4Y);
+					$this->SetXY($x, $maxY);
+					//$this->SetFont('Arial', '', 9);
+					//$this->MultiCell(130, 8, $lectureRow["co{$rowCnt}"],1);
+				}
+				$this->Ln(0);
+				$x=$this->GetX()+12;
+				$y=$maxY;
+				$this->SetXY($x,$x-4);
+				$this->Line($topleftX, $topY, $x, $y+2);
+				$this->Line($topleftX+14, $topY, $x+14, $y+2);
+				$this->Line($topleftX+169, $topY, $x+169, $y+2);
+				$this->Line($x, $y+2, $x+169, $y+2);
+				$this->SetXY($x,$y+2);
+				
+			}
+		}
+		else
+		{
+			$this->Cell(20, 8, "Error in connection. Please try again",1, 0, 'C');
+		}
+	}
+
+	function SelfStudy($conn, $row)
+	{
+		$sql = "SELECT * FROM selfstudy where coursecode = ? and section = ? and year = ?";
+ 
+		//$this->Cell(150, 8, $sql,1, 0, 'C');
+		//$this->Cell(150, 8, $row["coursecode"],1, 1, 'L');
+
+
+        if($stmt = mysqli_prepare($conn, $sql))
+        {
+	        // Bind variables to the prepared statement as parameters
+	        mysqli_stmt_bind_param($stmt, "ssd", $row["coursecode"], $row["section"], $row["year"]);
+	        mysqli_stmt_execute($stmt);
+	        $result = mysqli_stmt_get_result($stmt);
+	        //echo mysqli_num_rows($result);
+	        if(mysqli_num_rows($result) > 0)
+	        {
+
+	        	$selfstudyRow = $result->fetch_assoc();
+
+	        	//section header
+	        	$this->SetFont('Arial', 'B', 11);
+				$this->Cell(14,6,"H",1, 0, 'C');
+				$this->Cell(155,6,"Self Study",1, 1, 'L');
+				$this->Cell(12);
+				$topleftX = $this->GetX();
+				$topY = $this->GetY();
+
+				//$this->Cell(28);
+				$this->SetFont('Arial', 'B', 11);
+				$this->Cell(28);
+				$this->Cell(150,8,"Self Study Activity Description ",0, 1, 'L');
+				$this->Cell(28);
+				$this->SetFont('Arial', '', 10);
+				$this->MultiCell(150,6,$selfstudyRow["description"],1);
+
+				$this->Ln(4);
+
+				$this->SetFont('Arial', 'B', 11);
+				$this->Cell(12);
+				$this->Cell(28);
+				$this->Cell(150,8,"Self Study Evaluation Rubrixs ",0, 1, 'L');
+				$this->Cell(28);
+				$this->SetFont('Arial', '', 10);
+				$this->MultiCell(150,6,$selfstudyRow["rubrix"],1);
+
+				$x=$this->GetX()+12;
+				$y=$this->GetY();
+
+				$this->SetXY($x,$x-4);
+				$this->Line($topleftX, $topY, $x, $y+2);
+				$this->Line($topleftX+14, $topY, $x+14, $y+2);
+				$this->Line($topleftX+169, $topY, $x+169, $y+2);
+				$this->Line($x, $y+2, $x+169, $y+2);
+				//$this->SetXY($x,$y+2);
+			}
+		}
+	    
+	}
+
 	function table($conn, $row)
 	{
 		$this->COsection($conn, $row);
 		$this->COPOmapping($conn, $row);
 		$this->Assessment($conn, $row);
+		$this->AToolsCOMapping($conn, $row);
+		$this->LectureSchedule($conn, $row);
+		$this->Tutorials($conn, $row);
+		$this->Laboratory($conn, $row);
+		$this->SelfStudy($conn, $row);
 	}
 
 	function Page1($conn, $row)

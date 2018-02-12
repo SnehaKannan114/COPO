@@ -16,57 +16,57 @@
  TEMPLATE NAME:page3
  */
 
-get_header(); ?>
-		<b>Select the faculty</b><br>
-			<select name="">
+?>
+		<b style="margin-left:350px;">Select the faculty</b><br><br>
+			<select name="" style="margin-left:350px;">
 				<option>data to be fetched from db</option>
 				<option>a</option>
 				<option>b</option>
 			</select><br><br>
 
-	<select name="">
+	<select name="" style="margin-left:350px;">
 				<option>data to be fetched from db</option>
 				<option>a</option>
 				<option>b</option>
 			</select><br><br>
-	<select name="">
+	<select name="" style="margin-left:350px;">
 				<option>data to be fetched from db</option>
 				<option>a</option>
 				<option>b</option>
-			</select><br><br>
+			</select><br><br><br>
 			
 	<form action="" method="post">
-			Semester<br>
-		<input type="text" name="reportsem">
-		Course Title<br>
-<input type="text" name="reportcourse">
-Faculty Name<br>
-<input type="text" name="reportfaculty">
-Correlation Factor<br>
-	<input type="text" name="coorelationfactor"><br>
-	Number of students<br>
-	<input type="number" name="numberofstudent"><br>
-	S<br>
-	<input type="number" name="s"><br>
-	A<br>
-	<input type="number" name="a"><br>
-	B<br>
-	<input type="number" name="b"><br>
-	C<br>
-	<input type="number" name="c"><br>
-	D<br>
-	<input type="number" name="d"><br>
-	E<br>
-	<input type="number" name="e"><br>
-	F<br>
-	<input type="number" name="f"><br>
-	X<br>
-	<input type="number" name="x"><br>
-	I<br>
-	<input type="number" name="i"><br>
-	Self Audit By Faculty<br>
-	<input type="text" name="selfaudit"><br>
-	<input type="submit" value="Submit" id="sub">
+			<b style="margin-left:350px;">Semester</b><br>
+		<input type="text" name="reportsem" style="width:300px;margin-left:350px;"><br>
+		<b style="margin-left:350px;" >Course Title</b><br>
+<input type="text" name="reportcourse" style="width:300px;margin-left:350px;"><br>
+<b style="margin-left:350px;">Faculty Name</b><br>
+<input type="text" name="reportfaculty" style="width:300px;margin-left:350px;"><br>
+<b style="margin-left:350px;">Correlation Factor</b><br><br>
+	<input type="file" name="coorelationfactor" style="width:300px;margin-left:350px;"><br><br>
+	<b style="margin-left:350px;">Number of students</b><br>
+	<input type="number" name="numberofstudent" style="width:300px;margin-left:350px;"><br>
+	<b style="margin-left:350px;">S</b><br>
+	<input type="number" name="s" style="width:100px;margin-left:350px;"><br>
+	<b style="margin-left:350px;">A</b><br>
+	<input type="number" name="a" style="width:100px;margin-left:350px;"><br>
+	<b style="margin-left:350px;">B</b><br>
+	<input type="number" name="b" style="width:100px;margin-left:350px;"><br>
+	<b style="margin-left:350px;">C</b><br>
+	<input type="number" name="c" style="width:100px;margin-left:350px;"><br>
+	<b style="margin-left:350px;">D</b><br>
+	<input type="number" name="d" style="width:100px;margin-left:350px;"><br>
+	<b style="margin-left:350px;">E</b><br>
+	<input type="number" name="e" style="width:100px;margin-left:350px;"><br>
+	<b style="margin-left:350px;">F</b><br>
+	<input type="number" name="f" style="width:100px;margin-left:350px;"><br>
+	<b style="margin-left:350px;">X</b><br>
+	<input type="number" name="x" style="width:100px;margin-left:350px;"><br>
+	<b style="margin-left:350px;">I</b><br>
+	<input type="number" name="i" style="width:100px;margin-left:350px;"><br><br>
+	<b style="margin-left:350px;">Self Audit By Faculty</b><br>
+	<input type="text" name="selfaudit" style="width:800px;margin-left:350px;"><br><br>
+	<input type="submit" value="Submit" id="sub" style="margin-left:350px;">
 	</form>
 	
 
@@ -88,4 +88,5 @@ if ($conn->query($sql)){
 }
 			}?>
 
-<?php get_footer();
+<?php 
+?>

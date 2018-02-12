@@ -1,29 +1,43 @@
 <?php
-
-//get_header(); ?>
-
-<b>Select the faculty</b><br>
-	<select name="">
+/**
+ * The template for displaying all pages
+ *
+ * This is the template that displays all pages by default.
+ * Please note that this is the WordPress construct of pages
+ * and that other 'pages' on your WordPress site may use a
+ * different template.
+ *
+ * @link https://codex.wordpress.org/Template_Hierarchy
+ *
+ * @package WordPress
+ * @subpackage Twenty_Seventeen
+ * @since 1.0
+ * @version 1.0
+ TEMPLATE NAME:page2
+ */
+?>
+<b style="margin-left:350px;">Select the faculty</b><br><br>
+			<select name="" style="margin-left:350px;">
 				<option>data to be fetched from db</option>
 				<option>a</option>
 				<option>b</option>
 			</select><br><br>
 
-	<select name="">
+	<select name="" style="margin-left:350px;">
 				<option>data to be fetched from db</option>
 				<option>a</option>
 				<option>b</option>
 			</select><br><br>
-	<select name="">
+	<select name="" style="margin-left:350px;">
 				<option>data to be fetched from db</option>
 				<option>a</option>
 				<option>b</option>
-			</select><br><br>
+			</select><br><br><br><br><br>
 <form action ="" method="post">
 	
 
 <table>
-	<b>Assessment Tool Mapping to CO</b><br>
+	<b style="margin-left:400px;">Assessment Tool Mapping to CO</b><br><br><br>
 			<tr>
 				<th></th>
 				<th>CO1</th>
@@ -131,43 +145,25 @@
 				<td><input type="number" name="79"></td>
 			</tr>
 </table><br>
-	<input type="submit" value="Submit" name="sub">
+	<input type="submit" value="Submit" name="sub" style="margin-left:350px;"><br><br><br><br>
 </form>
 
-<form action="" method="post">
-	<b>Lecture Schedule</b><br>
-			<b>Lecture Number</b><input type="number" name="lecture"><br>
-			<b>Unit Number</b><input type="number" name="unitl"><br>
-			<b>Topic</b><input type="text" name="topicl"><br>
-			<b>Remarks</b><input type="text" name="remarksl"><br>
-			<input type="submit" name="sublecture" value="Add Lecture ">
+<form action="./insert.php" method="post">
+	<b style="margin-left:450px;">Lecture Schedule</b><br><br><br>
+			<b style="margin-left:350px;">Lecture Number</b><input type="number" name="lecture" style="width:100px;margin-left:350px;"><br>
+			<b style="margin-left:350px;">Unit Number</b><input type="number" name="unitl" style="width:100px;margin-left:350px;"><br>
+			<b style="margin-left:350px;">Topic</b><input type="text" name="topicl" style="width:250px;margin-left:350px;"><br>
+			<b style="margin-left:350px;">Remarks</b><input type="text" name="remarksl" style="width:400px;margin-left:350px;"><br>
+			<input type="submit" name="sublecture" value="Add Lecture" style="margin-left:350px;"><br><br><br><br>
 	</form>
-	<?php
 	
-		
-			if(isset($_POST["sublecture"])){
-			$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "bmsce";
-			$conn = new mysqli($servername, $username, $password, $dbname);
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-} $sql="INSERT INTO lectureschedule VALUES('"."','"."',0,'".$_POST["lecture"]."','".$_POST["unitl"]."','".$_POST["topicl"]."','".$_POST["remarksl"]."');";
-if ($conn->query($sql)){
-	echo "successful inserted";
-}
-			}
-		
-	?>
 	<form action="" method="post">
-		<b>Tutorial Schedule</b><br>
-			<b>Tutorial Number</b><input type="number" name="tutorial"><br>
-			<b>Unit Number</b><input type="number" name="unitt"><br>
-			<b>Topic</b><input type="text" name="topict"><br>
-			<b>Remarks</b><input type="text" name="remarkst"><br>
-			<input type="submit" name="subtutorial" value="Add Tutorial ">
+		<b style="margin-left:450px;">Tutorial Schedule</b><br><br><br>
+			<b style="margin-left:350px;">Tutorial Number</b><input type="number" name="tutorial" style="width:100px;margin-left:350px;"><br>
+			<b style="margin-left:350px;">Unit Number</b><input type="number" name="unitt" style="width:100px;margin-left:350px;"><br>
+			<b style="margin-left:350px;">Topic</b><input type="text" name="topict" style="width:250px;margin-left:350px;"><br>
+			<b style="margin-left:350px;">Remarks</b><input type="text" name="remarkst" style="width:400px;margin-left:350px;"><br>
+			<input type="submit" name="subtutorial" value="Add Tutorial" style="margin-left:350px;"><br><br><br><br>
 	</form>
 	<?php
 	
@@ -190,12 +186,12 @@ if ($conn->query($sql)){
 	?>
 	
 	<form action="" method="post">
-		<b>Laboratory Schedule</b><br>
-			<b>Experiment Number</b><input type="number" name="experiment"><br>
-			<b>Unit Number</b><input type="number" name="unit"><br>
-			<b>Experiment Name</b><input type="text" name="experimentname"><br>
-			<b>Remarks</b><input type="text" name="remarkslab"><br>
-			<input type="submit" name="sublab" value="Add Lecture ">
+		<b style="margin-left:450px;">Laboratory Schedule</b><br><br><br>
+			<b style="margin-left:350px;">Experiment Number</b><input type="number" name="experiment" style="width:100px;margin-left:350px;"><br>
+			<b style="margin-left:350px;">Unit Number</b><input type="number" name="unit" style="width:100px;margin-left:350px;"><br>
+			<b style="margin-left:350px;">Experiment Name</b><input type="text" name="experimentname" style="width:250px;margin-left:350px;"><br>
+			<b style="margin-left:350px;">Remarks</b><input type="text" name="remarkslab" style="width:400px;margin-left:350px;"><br>
+			<input type="submit" name="sublab" value="Add Lecture " style="margin-left:350px;"><br><br><br><br>
 	</form>
 	<?php
 	
@@ -217,10 +213,10 @@ if ($conn->query($sql)){
 		
 	?>
 	<form action="" method="post">
-			<b>Self Study</b><br>
-			<b>Activity Description</b><input type="text" name="topic"><br>
-			<b>Evaluation Rubricks</b><input type="text" name="rubricks"><br>
-			<input type="submit" name="subselfsudy" value="Add Self Study ">
+			<b style="margin-left:450px;">Self Study</b><br><br><br>
+			<b style="margin-left:350px;">Activity Description</b><input type="text" name="topic" style="width:600px;margin-left:350px;"><br>
+			<b style="margin-left:350px;">Evaluation Rubricks</b><input type="text" name="rubricks" style="width:600px;margin-left:350px;"><br>
+			<input type="submit" name="subselfsudy" value="Add Self Study " style="margin-left:350px;"><br><br><br><br>
 	</form>
 	<?php
 	
@@ -242,11 +238,11 @@ if ($conn->query($sql)){
 		
 	?>
 	<form action="" method="post">
-	<b>Suggestion</b><br>
-			<b>Suggestion for Improvement</b><input type="text" name="suggestion"><br>
-			<b>Action</b><input type="text" name="actions"><br>
-			<b>Summary</b><input type="text" name="summary"><br>
-			<input type="submit" name="subsuggestion" value="Add">
+	<b style="margin-left:450px;">Suggestion</b><br><br><br>
+			<b style="margin-left:350px;">Suggestion for Improvement</b><input type="text" name="suggestion" style="width:800px;margin-left:350px;"><br>
+			<b style="margin-left:350px;">Action</b><input type="text" name="actions" style="width:800px;margin-left:350px;"><br>
+			<b style="margin-left:350px;">Summary</b><input type="text" name="summary" style="width:800px;margin-left:350px;"><br>
+			<input type="submit" name="subsuggestion" value="Add" style="margin-left:350px;"><br><br><br><br>
 
 	</form>
 	<?php
@@ -267,8 +263,8 @@ if ($conn->query($sql)){
 }
 			}?>
 		<form action="" method="post">
-<b>Assessment Tool </b>
-<select name="atool">
+<b style="margin-left:450px;" >Assessment Tool CIE</b><br><br><br>
+<select name="atool" style="margin-left:350px;">
 <option value="t1">Test-1</option>
 <option value="t2">Test-2</option>
 <option value="t3">Test-3</option>
@@ -277,14 +273,14 @@ if ($conn->query($sql)){
 <option value="aat">AAT/Other</option>
 </select><br><br>
 
-<b>Question No.</b><input type="Text" name="qnocie"><br>
-<b>Remember/Understand</b><input type="Number" name="cieru"><br>
-<b>Apply Knowledge</b><input type="Number" name="cieak"><br>
-<b>Analyze</b><input type="Number" name="ciean"><br>
-<b>Design</b><input type="Number" name="ciede"><br>
-<b>Any Other(Please Specify)</b><input type="Number" name="cieao"><br>
+<b style="margin-left:350px;">Question No.</b><input type="Text" name="qnocie" style="width:200px;margin-left:350px;"><br>
+<b style="margin-left:350px;">Remember/Understand</b><input type="Number" name="cieru" style="width:200px;margin-left:350px;"><br>
+<b style="margin-left:350px;">Apply Knowledge</b><input type="Number" name="cieak" style="width:200px;margin-left:350px;"><br>
+<b style="margin-left:350px;">Analyze</b><input type="Number" name="ciean" style="width:200px;margin-left:350px;"><br>
+<b style="margin-left:350px;">Design</b><input type="Number" name="ciede" style="width:200px;margin-left:350px;"><br>
+<b style="margin-left:350px;">Any Other(Please Specify)</b><input type="Number" name="cieao" style="width:200px;margin-left:350px;"><br>
 
-<input type="submit" name="submitcie" value="Submit">
+<input type="submit" name="submitcie" value="Submit" style="margin-left:350px;"><br><br><br><br>
 
 
 
@@ -306,19 +302,20 @@ if ($conn->query($sql)){
 	echo "successful inserted";
 }
 			}?>
-<form action="insert.php" method="post">
-<b>Assessment Tool</b><select name="atoolsee">
+<form action="" method="post">
+<b style="margin-left:450px;" >Assessment Tool SEE</b><br><br><br>
+<select name="atoolsee" style="margin-left:350px;" >
 <option value="see">SEE</option>
 </select><br><br>
 
-<b>Question No.</b><input type="Text" name="qnosee"><br>
-<b>Remember/Understand</b><input type="Number" name="seeru"><br>
-<b>Apply Knowledge</b><input type="Number" name="seeak"><br>
-<b>Analyze</b><input type="Number" name="seean"><br>
-<b>Design</b><input type="Number" name="seede"><br>
-<b>Any Other(Please Specify)</b><input type="Number" name="seeao"><br>
+<b style="margin-left:350px;" >Question No.</b><input type="Text" name="qnosee" style="width:200px;margin-left:350px;" ><br>
+<b style="margin-left:350px;" >Remember/Understand</b><input type="Number" name="seeru" style="width:200px;margin-left:350px;" ><br>
+<b style="margin-left:350px;" >Apply Knowledge</b><input type="Number" name="seeak" style="width:200px;margin-left:350px;" ><br>
+<b style="margin-left:350px;" >Analyze</b><input type="Number" name="seean" style="width:200px;margin-left:350px;" ><br>
+<b style="margin-left:350px;" >Design</b><input type="Number" name="seede" style="width:200px;margin-left:350px;" ><br>
+<b style="margin-left:350px;" >Any Other(Please Specify)</b><input type="Number" name="seeao" style="width:200px;margin-left:350px;" ><br>
 
-<input type="submit" name="submitsee" value="Submit">
+<input type="submit" name="submitsee" value="Submit" style="margin-left:350px;"><br><br><br><br>
 	<?php
 	
 		
@@ -348,62 +345,62 @@ if ($conn->query($sql)){
 </tr>
 <tr>
 <td>CO1</td>
-<td><input type="Number" name="1m"></td>
-<td><input type="Number" name="1c"></td>
-<td><input type="Number" name="1ts"></td>
-<td><input type="Text" name="1r"></td>
+<td><input type="Number" name="1m" style="width:200px;"></td>
+<td><input type="Number" name="1c" style="width:200px;"></td>
+<td><input type="Number" name="1ts" style="width:200px;"></td>
+<td><input type="Text" name="1r" style="width:200px;"></td>
 </tr>
 <tr>
 <td>CO2</td>
-<td><input type="Number" name="2m"></td>
-<td><input type="Number" name="2c"></td>
-<td><input type="Number" name="2ts"></td>
-<td><input type="Text" name="2r"></td>
+<td><input type="Number" name="2m" style="width:200px;"></td>
+<td><input type="Number" name="2c" style="width:200px;"></td>
+<td><input type="Number" name="2ts" style="width:200px;"></td>
+<td><input type="Text" name="2r" style="width:200px;"></td>
 </tr>
 <tr>
 <td>CO3</td>
-<td><input type="Number" name="3m"></td>
-<td><input type="Number" name="3c"></td>
-<td><input type="Number" name="3ts"></td>
-<td><input type="Text" name="3r"></td>
+<td><input type="Number" name="3m" style="width:200px;"></td>
+<td><input type="Number" name="3c" style="width:200px;"></td>
+<td><input type="Number" name="3ts" style="width:200px;"></td>
+<td><input type="Text" name="3r" style="width:200px;"></td>
 </tr>
 <tr>
 <td>CO4</td>
-<td><input type="Number" name="4m"></td>
-<td><input type="Number" name="4c"></td>
-<td><input type="Number" name="4ts"></td>
-<td><input type="Text" name="4r"></td>
+<td><input type="Number" name="4m" style="width:200px;"></td>
+<td><input type="Number" name="4c" style="width:200px;"></td>
+<td><input type="Number" name="4ts" style="width:200px;"></td>
+<td><input type="Text" name="4r" style="width:200px;"></td>
 </tr>
 <tr>
 <td>CO5</td>
-<td><input type="Number" name="5m"></td>
-<td><input type="Number" name="5c"></td>
-<td><input type="Number" name="5ts"></td>
-<td><input type="Text" name="5r"></td>
+<td><input type="Number" name="5m" style="width:200px;"></td>
+<td><input type="Number" name="5c" style="width:200px;"></td>
+<td><input type="Number" name="5ts" style="width:200px;"></td>
+<td><input type="Text" name="5r" style="width:200px;"></td>
 </tr>
 <tr>
 <td>CO6</td>
-<td><input type="Number" name="6m"></td>
-<td><input type="Number" name="6c"></td>
-<td><input type="Number" name="6ts"></td>
-<td><input type="Text" name="6r"></td>
+<td><input type="Number" name="6m" style="width:200px;"></td>
+<td><input type="Number" name="6c" style="width:200px;"></td>
+<td><input type="Number" name="6ts" style="width:200px;"></td>
+<td><input type="Text" name="6r" style="width:200px;"></td>
 </tr>
 <tr>
 <td>CO7</td>
-<td><input type="Number" name="7m"></td>
-<td><input type="Number" name="7c"></td>
-<td><input type="Number" name="7ts"></td>
-<td><input type="Text" name="7r"></td>
+<td><input type="Number" name="7m" style="width:200px;"></td>
+<td><input type="Number" name="7c" style="width:200px;"></td>
+<td><input type="Number" name="7ts" style="width:200px;"></td>
+<td><input type="Text" name="7r" style="width:200px;"></td>
 </tr>
 <tr>
 <td>CO8</td>
-<td><input type="Number" name="8m"></td>
-<td><input type="Number" name="8c"></td>
-<td><input type="Number" name="8ts"></td>
-<td><input type="Text" name="8r"></td>
+<td><input type="Number" name="8m" style="width:200px;"></td>
+<td><input type="Number" name="8c" style="width:200px;"></td>
+<td><input type="Number" name="8ts" style="width:200px;"></td>
+<td><input type="Text" name="8r" style="width:200px;"></td>
 </tr>
 </table>
-<input type="submit" value="Submit" name="attainment">
+<input type="submit" value="Submit" name="attainment" style="margin-left:550px;"><br><br><br>
 	</form>
 	<br>
 	
@@ -447,12 +444,12 @@ if ($conn->connect_error) {
 		}
 	?>
 	<form action="" method="post">
-		<b>Innovations in TLP/Best Practices adopted</b><br>
+		<b style="margin-left:350px;">Innovations in TLP/Best Practices adopted</b><br>
 		
-		<input type="text" name="innovation"><br>
-		<b>Any Other<b><br>
-		<input type="text" name="other"><br>
-		<input type="submit" name="subtlp" Value="Submit">
+		<input type="text" name="innovation" style="width:800px;margin-left:350px;"><br>
+		<b style="margin-left:350px;">Any Other<b><br>
+		<input type="text" name="other" style="width:800px;margin-left:350px;"><br>
+		<input type="submit" name="subtlp" Value="Submit" style="margin-left:350px;">
 	</form>
 	<?php
 	
@@ -473,4 +470,5 @@ if ($conn->query($sql)){
 			}?>
 
 
-<?php //get_footer();
+<?php
+?>
