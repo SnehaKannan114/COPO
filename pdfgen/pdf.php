@@ -3,6 +3,11 @@ require_once('../fpdf.php');
 
 class PDF extends FPDF
 {
+	var $bottom_margin = 0;
+	var $page_height = 286.93;
+	var $height_of_cell = 60;
+	var $letterCnt = 'A';
+					
 	// Page header
 	function Header()
 	{
@@ -45,6 +50,9 @@ class PDF extends FPDF
 		
 		// Line break
 		$this->Ln(9);
+
+		//When new subject starts, reset letter count
+		$this->letterCnt = 'A';
 	}
 
 	function courseDetails($row)
@@ -57,7 +65,7 @@ class PDF extends FPDF
 		$this->line(65,$currentY,185,$currentY);
 		$this->SetFont('Arial','',11);
 		$this->cell(30);
-		$this->Cell(120,10,$row["coursetitle"],0,0,'L');
+		$this->Cell(120,10,strtoupper($row["coursetitle"]),0,0,'L');
 		$this->Ln(6);
 
 		$this->SetFont('Arial','B',9);
@@ -68,7 +76,7 @@ class PDF extends FPDF
 		$this->line(65,$currentY,185,$currentY);
 		$this->SetFont('Arial','',11);
 		$this->cell(30);
-		$this->Cell(120,10,$row["coursecode"],0,0,'L');
+		$this->Cell(120,10,strtoupper($row["coursecode"]),0,0,'L');
 		$this->Ln(6);
 		
 		$this->SetFont('Arial','B',9);
@@ -91,7 +99,7 @@ class PDF extends FPDF
 		$this->line(75,$currentY,185,$currentY);
 		$this->SetFont('Arial','',11);
 		$this->cell(20);
-		$this->Cell(100,10,$row["coursetype"],0,0,'L');
+		$this->Cell(100,10,strtoupper($row["coursetype"]),0,0,'L');
 		
 		$this->Ln(6);
 		
@@ -115,7 +123,7 @@ class PDF extends FPDF
 		$this->line(65,$currentY,185,$currentY);
 		$this->SetFont('Arial','',11);
 		$this->cell(30);
-		$this->Cell(120,10,$row["program"],0,0,'L');
+		$this->Cell(120,10,strtoupper($row["program"]),0,0,'L');
 		
 		$this->Ln(6);
 		
@@ -127,7 +135,8 @@ class PDF extends FPDF
 		$this->line(65,$currentY,185,$currentY);
 		$this->SetFont('Arial','',11);
 		$this->cell(30);
-		$this->Cell(120,10,$row["faculty"],0,0,'L');
+		$this->Cell(120,10,strtoupper($row["faculty"]),0,0,'L');
+		//$this->Cell(120,10,ucwords($row["faculty"]),0,0,'L');
 		
 	}
 
@@ -151,11 +160,18 @@ class PDF extends FPDF
 
 	        	$courseCodeRow = $result->fetch_assoc();
 
+	        	//To push to next page if not sufficient space
+				$space_left = $this->page_height -($this->GetY()+$this->bottom_margin);
+	        	if($this->height_of_cell > $space_left)
+	        	{	$this->AddPage();
+	        		$this->Cell(12);
+	        	}
+	        	
 	        	//section header
 	        	$this->Ln(12);
 				$this->Cell(12);
 				$this->SetFont('Arial', 'B', 11);
-				$this->Cell(14,6,"A",1, 0, 'C');
+				$this->Cell(14,6,$this->letterCnt++,1, 0, 'C');
 				$this->Cell(155,6,"Course Outcomes",1, 1, 'L');
 				
 				$noOfCOs = 0;
@@ -183,7 +199,7 @@ class PDF extends FPDF
 					$this->SetFont('Arial', 'BI', 11);
 					$this->Cell(20, 8,"CO{$rowCnt}", 1, 0, 'C');
 					$this->SetFont('Arial', '', 9);
-					$this->MultiCell(130, 8, $courseCodeRow["co{$rowCnt}"],1);
+					$this->MultiCell(130, 8, ucfirst($courseCodeRow["co{$rowCnt}"]),1);
 				}
 			}
 				/*warning at the end
@@ -245,12 +261,20 @@ class PDF extends FPDF
 		    }
 		}
 
+		//To push to next page if not sufficient space
+		$space_left = $this->page_height -($this->GetY()+$this->bottom_margin);
+	    if($this->height_of_cell > $space_left)
+	    {	
+	    	$this->AddPage();
+	      	$this->Cell(12);
+	    }
+	        	
 
 		//print
 		$this->Ln(4);
 		$this->Cell(12);
 		$this->SetFont('Arial', 'B', 11);
-		$this->Cell(14,6,"B",1, 0, 'C');
+		$this->Cell(14, 6, $this->letterCnt++, 1, 0, 'C');
 		$this->Cell(155,6,"CO-PO Mapping",1, 1, 'L');
 		$this->Cell(12);
 		$this->Cell(14, 16 + 8*$noOfCOs,"",1, 0, 'C');
@@ -308,11 +332,18 @@ class PDF extends FPDF
 
 	        	$testRow = $result->fetch_assoc();
 
+				//To push to next page if not sufficient space
+				$space_left = $this->page_height -($this->GetY()+$this->bottom_margin);
+	        	if($this->height_of_cell > $space_left)
+	        	{	$this->AddPage();
+	        		$this->Cell(12);
+	        	}
+	        	
 	        	//section header
 	        	$this->Ln(4);
 				$this->Cell(12);
 				$this->SetFont('Arial', 'B', 11);
-				$this->Cell(14,6,"C",1, 0, 'C');
+				$this->Cell(14,6,$this->letterCnt++,1, 0, 'C');
 				$this->Cell(155,6,"Assessment Tools(for 50 marks of CIE)",1, 1, 'L');
 				
 				$noOfTests = 0;
@@ -415,11 +446,18 @@ class PDF extends FPDF
 	        //echo mysqli_num_rows($result);
 	        if(mysqli_num_rows($result) > 0)
 	        {
+	        	//To push to next page if not sufficient space
+				$space_left = $this->page_height -($this->GetY()+$this->bottom_margin);
+	        	if($this->height_of_cell > $space_left)
+	        	{	$this->AddPage();
+	        		$this->Cell(12);
+	        	}
+	        	
 	        	//section header
 	        	$this->Ln(2);
 				$this->Cell(12);
 				$this->SetFont('Arial', 'B', 11);
-				$this->Cell(14, 6, "D",1, 0, 'C');
+				$this->Cell(14, 6, $this->letterCnt++, 1, 0, 'C');
 				$this->Cell(155, 6, "Assessment Tool Mapping to CO",1, 1, 'L');
 
 				$noOfTests = mysqli_num_rows($result);
@@ -489,11 +527,18 @@ class PDF extends FPDF
 	        //echo mysqli_num_rows($result);
 	        if(mysqli_num_rows($result) > 0)
 	        {
+	        	//To push to next page if not sufficient space
+				$space_left = $this->page_height -($this->GetY()+$this->bottom_margin);
+	        	if($this->height_of_cell > $space_left)
+	        	{	$this->AddPage();
+	        		$this->Cell(12);
+	        	}
+	        	
 	        	//section header
 	        	$this->Ln(2);
 				$this->Cell(12);
 				$this->SetFont('Arial', 'B', 11);
-				$this->Cell(14, 6, "E",1, 0, 'C');
+				$this->Cell(14, 6, $this->letterCnt++, 1, 0, 'C');
 				$this->Cell(155, 6, "Lecture Schedule",1, 1, 'L');
 
 				$noOfLectures = mysqli_num_rows($result);
@@ -568,11 +613,18 @@ class PDF extends FPDF
 	        //echo mysqli_num_rows($result);
 	        if(mysqli_num_rows($result) > 0)
 	        {
+	        	//To push to next page if not sufficient space
+				$space_left = $this->page_height -($this->GetY()+$this->bottom_margin);
+	        	if($this->height_of_cell > $space_left)
+	        	{	$this->AddPage();
+	        		$this->Cell(12);
+	        	}
+	        	
 	        	//section header
 	        	$this->Ln(0);
 				$this->Cell(12);
 				$this->SetFont('Arial', 'B', 11);
-				$this->Cell(14, 6, "F",1, 0, 'C');
+				$this->Cell(14, 6, $this->letterCnt++,1 , 0, 'C');
 				$this->Cell(155, 6, "Tutorials",1, 1, 'L');
 
 				$noOfTutorials = mysqli_num_rows($result);
@@ -646,11 +698,18 @@ class PDF extends FPDF
 	        //echo mysqli_num_rows($result);
 	        if(mysqli_num_rows($result) > 0)
 	        {
+	        	//To push to next page if not sufficient space
+				$space_left = $this->page_height -($this->GetY()+$this->bottom_margin);
+	        	if($this->height_of_cell > $space_left)
+	        	{	$this->AddPage();
+	        		$this->Cell(12);
+	        	}
+	        	
 	        	//section header
 	        	$this->Ln(0);
 				$this->Cell(12);
 				$this->SetFont('Arial', 'B', 11);
-				$this->Cell(14, 6, "F",1, 0, 'C');
+				$this->Cell(14, 6, $this->letterCnt++,1 , 0, 'C');
 				$this->Cell(155, 6, "Laboratory",1, 1, 'L');
 
 				$noOfLabs = mysqli_num_rows($result);
@@ -731,9 +790,16 @@ class PDF extends FPDF
 
 	        	$selfstudyRow = $result->fetch_assoc();
 
+	        	//To push to next page if not sufficient space
+				$space_left = $this->page_height -($this->GetY()+$this->bottom_margin);
+	        	if($this->height_of_cell > $space_left)
+	        	{	$this->AddPage();
+	        		$this->Cell(12);
+	        	}
+	        	
 	        	//section header
 	        	$this->SetFont('Arial', 'B', 11);
-				$this->Cell(14,6,"H",1, 0, 'C');
+				$this->Cell(14, 6, $this->letterCnt++, 1, 0, 'C');
 				$this->Cell(155,6,"Self Study",1, 1, 'L');
 				$this->Cell(12);
 				$topleftX = $this->GetX();
@@ -765,7 +831,141 @@ class PDF extends FPDF
 				$this->Line($topleftX+14, $topY, $x+14, $y+2);
 				$this->Line($topleftX+169, $topY, $x+169, $y+2);
 				$this->Line($x, $y+2, $x+169, $y+2);
-				//$this->SetXY($x,$y+2);
+				$this->SetXY($x,$y+2);
+			}
+		}
+	    
+	}
+
+	function Survey($conn, $row)
+	{
+		$sql = "SELECT * FROM survey where coursecode = ? and section = ? and year = ?";
+ 
+		//$this->Cell(150, 8, $sql,1, 0, 'C');
+		//$this->Cell(150, 8, $row["coursecode"],1, 1, 'L');
+
+
+        if($stmt = mysqli_prepare($conn, $sql))
+        {
+	        // Bind variables to the prepared statement as parameters
+	        mysqli_stmt_bind_param($stmt, "ssd", $row["coursecode"], $row["section"], $row["year"]);
+	        mysqli_stmt_execute($stmt);
+	        $result = mysqli_stmt_get_result($stmt);
+	        //echo mysqli_num_rows($result);
+	        if(mysqli_num_rows($result) > 0)
+	        {
+
+	        	$surveyRow = $result->fetch_assoc();
+	        	if(strlen($surveyRow["suggestion"])>3)
+	        	{
+	        		//To push to next page if not sufficient space
+					$space_left = $this->page_height -($this->GetY()+$this->bottom_margin);
+	        		if($this->height_of_cell > $space_left)
+	        		{	$this->AddPage();
+	        			$this->Cell(12);
+	        		}
+	        		
+		        	//section header
+		        	$this->SetFont('Arial', 'B', 11);
+		        	$x=$this->GetX();
+					$y=$this->GetY();
+					$this->MultiCell(14, 6, "{$this->letterCnt}           ", 1);
+					$this->letterCnt++;
+					//$this->Cell(50, 8, $lectureRow["remarks"], 1, 0, 'C');
+					$this->SetXY($x+14,$y);
+					$this->MultiCell(155,6,"List the suggestions/comments for improvement of the course (or similar course) delivered during the previous academic year (as mentioned in the course file)",1);
+					$this->Cell(12);
+					$topleftX = $this->GetX();
+					$topY = $this->GetY();
+
+					//$this->Cell(28);
+					$this->SetFont('Arial', 'B', 11);
+					$this->Cell(14);
+					$this->SetFont('Arial', '', 10);
+					$this->MultiCell(150,8,$surveyRow["suggestion"],0);
+
+					$x=$this->GetX()+12;
+					$y=$this->GetY();
+
+					$this->SetXY($x,$x-4);
+					$this->Line($topleftX, $topY, $x, $y);
+					$this->Line($topleftX+14, $topY, $x+14, $y);
+					$this->Line($topleftX+169, $topY, $x+169, $y);
+					$this->Line($x, $y, $x+169, $y);
+					$this->SetXY($x,$y);
+				}
+				if(strlen($surveyRow["action"])>3)
+	        	{
+	        		//To push to next page if not sufficient space
+					$space_left = $this->page_height -($this->GetY()+$this->bottom_margin);
+	        		if($this->height_of_cell > $space_left)
+	        		{	$this->AddPage();
+	        			$this->Cell(12);
+	        		}
+		        	//section header
+		        	$this->SetFont('Arial', 'B', 11);
+		        	$x=$this->GetX();
+					$y=$this->GetY();
+					$this->MultiCell(14, 6, $this->letterCnt++, 1);
+					//$this->Cell(50, 8, $lectureRow["remarks"], 1, 0, 'C');
+					$this->SetXY($x+14,$y);
+					$this->MultiCell(155,6,"Action taken to address the suggestions/comments (of the above)",1);
+					$this->Cell(12);
+					$topleftX = $this->GetX();
+					$topY = $this->GetY();
+
+					//$this->Cell(28);
+					$this->SetFont('Arial', 'B', 11);
+					$this->Cell(14);
+					$this->SetFont('Arial', '', 10);
+					$this->MultiCell(150,8,$surveyRow["action"],0);
+					$x=$this->GetX()+12;
+					$y=$this->GetY();
+
+					$this->SetXY($x,$x-4);
+					$this->Line($topleftX, $topY, $x, $y);
+					$this->Line($topleftX+14, $topY, $x+14, $y);
+					$this->Line($topleftX+169, $topY, $x+169, $y);
+					$this->Line($x, $y, $x+169, $y);
+					$this->SetXY($x,$y);
+				}
+				if(strlen($surveyRow["summary"])>3)
+	        	{
+	        		//To push to next page if not sufficient space
+					$space_left = $this->page_height -($this->GetY()+$this->bottom_margin);
+	        		if($this->height_of_cell > $space_left)
+	        		{	$this->AddPage();
+	        			$this->Cell(12);
+	        		}
+
+		        	//section header
+		        	$this->SetFont('Arial', 'B', 11);
+		        	$x=$this->GetX();
+					$y=$this->GetY();
+					$this->MultiCell(14, 6, $this->letterCnt++, 1);
+					//$this->Cell(50, 8, $lectureRow["remarks"], 1, 0, 'C');
+					$this->SetXY($x+14,$y);
+					$this->MultiCell(155,6,"Course End Survery (Summary)",1);
+					$this->Cell(12);
+					$topleftX = $this->GetX();
+					$topY = $this->GetY();
+
+					//$this->Cell(28);
+					$this->SetFont('Arial', 'B', 11);
+					$this->Cell(14);
+					$this->SetFont('Arial', '', 10);
+					$this->MultiCell(150,8,$surveyRow["summary"],0);
+
+					$x=$this->GetX()+12;
+					$y=$this->GetY();
+
+					$this->SetXY($x,$x-4);
+					$this->Line($topleftX, $topY, $x, $y);
+					$this->Line($topleftX+14, $topY, $x+14, $y);
+					$this->Line($topleftX+169, $topY, $x+169, $y);
+					$this->Line($x, $y, $x+169, $y);
+					$this->SetXY($x,$y);
+				}
 			}
 		}
 	    
@@ -781,6 +981,8 @@ class PDF extends FPDF
 		$this->Tutorials($conn, $row);
 		$this->Laboratory($conn, $row);
 		$this->SelfStudy($conn, $row);
+		$this->Survey($conn, $row);
+			
 	}
 
 	function Page1($conn, $row)
