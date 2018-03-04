@@ -869,7 +869,7 @@ class PDF extends FPDF
 		        	$this->SetFont('Arial', 'B', 11);
 		        	$x=$this->GetX();
 					$y=$this->GetY();
-					$this->MultiCell(14, 6, "{$this->letterCnt}           ", 1);
+					$this->MultiCell(14, 6, "     {$this->letterCnt}          ", 1, 'L');
 					$this->letterCnt++;
 					//$this->Cell(50, 8, $lectureRow["remarks"], 1, 0, 'C');
 					$this->SetXY($x+14,$y);
@@ -942,7 +942,7 @@ class PDF extends FPDF
 		        	$this->SetFont('Arial', 'B', 11);
 		        	$x=$this->GetX();
 					$y=$this->GetY();
-					$this->MultiCell(14, 6, $this->letterCnt++, 1);
+					$this->MultiCell(14, 6, $this->letterCnt++, 1, 'C');
 					//$this->Cell(50, 8, $lectureRow["remarks"], 1, 0, 'C');
 					$this->SetXY($x+14,$y);
 					$this->MultiCell(155,6,"Course End Survery (Summary)",1);
@@ -971,6 +971,353 @@ class PDF extends FPDF
 	    
 	}
 
+	function auditOfAssesTools($conn, $row)
+	{
+		$sql = "SELECT * FROM cie where coursecode = ? and section = ? and year = ?";
+ 
+		//$this->Cell(150, 8, $sql,1, 0, 'C');
+		//$this->Cell(150, 8, $row["coursecode"],1, 1, 'L');
+
+        if($stmt = mysqli_prepare($conn, $sql))
+        {
+	        // Bind variables to the prepared statement as parameters
+	        mysqli_stmt_bind_param($stmt, "ssd", $row["coursecode"], $row["section"], $row["year"]);
+	        mysqli_stmt_execute($stmt);
+	        $result = mysqli_stmt_get_result($stmt);
+	        //echo mysqli_num_rows($result);
+	        if(mysqli_num_rows($result) > 0)
+	        {
+	        	//To push to next page if not sufficient space
+				$space_left = $this->page_height -($this->GetY()+$this->bottom_margin);
+	        	if($this->height_of_cell > $space_left)
+	        	{	$this->AddPage();
+	        		$this->Cell(12);
+	        	}
+	        	
+	        	//section header
+	        	$this->SetFont('Arial', 'B', 11);
+				$this->Cell(14, 6, $this->letterCnt++, 1, 0, 'C');
+				$this->Cell(155,6,"Micro-level Audit of Assesment Tool(s) used",1, 1, 'L');
+				$this->Cell(12);
+				$topleftX = $this->GetX();
+				$topY = $this->GetY();
+        		$this->Ln(2);
+				$this->Cell(28);
+				$this->SetFont('Arial', 'B', 11);
+				$x=$this->GetX();
+				$y=$this->GetY();
+				$this->MultiCell(15, 6, "                        \t", 1);
+				//$this->Cell(50, 8, $lectureRow["remarks"], 1, 0, 'C');
+				$this->SetXY($x+15,$y);
+				
+				$x=$this->GetX();
+				$y=$this->GetY();
+				$this->MultiCell(15, 6, "                        \t", 1);
+				//$this->Cell(50, 8, $lectureRow["remarks"], 1, 0, 'C');
+				$this->SetXY($x+15,$y);
+				
+				$x=$this->GetX();
+				$y=$this->GetY();
+				$this->MultiCell(25, 6, "Remember/ Understand", 1);
+				//$this->Cell(50, 8, $lectureRow["remarks"], 1, 0, 'C');
+				$this->SetXY($x+25,$y);
+				$x=$this->GetX();
+				$y=$this->GetY();
+				$this->MultiCell(23, 6, "Apply/ Knowledge", 1);
+				$this->SetXY($x+23,$y);
+
+				$x=$this->GetX();
+				$y=$this->GetY();
+				$this->MultiCell(17, 6, "Analyze\t", 1);
+				$this->SetXY($x+17,$y);
+				$x=$this->GetX();
+				$y=$this->GetY();
+				$this->MultiCell(16, 6, "Design\t", 1);
+				$this->SetXY($x+16,$y);
+				$x=$this->GetX();
+				$y=$this->GetY();
+				$this->MultiCell(22, 6, "Any other (Specify)", 1);
+				$this->SetXY($x+22,$y);
+								
+				$x=$this->GetX();
+				$y=$this->GetY();
+				$this->MultiCell(18, 6, "Total Marks", 1);
+				$this->SetXY($x+18,$y+6);
+				$testTypes = array();
+
+				$starty=$this->GetY();
+				
+				$cnt = 0;
+				/*for ($row = 0; $row < 2; $row++) {
+					for ($col = 0; $col < 2; $col++) {
+				 	$row = $testTypes["Test-1"][$col];
+				 	$this->Cell(18, 6, $row['ak'] , 1, 1, 'C');   
+				  }
+				}*/
+				while($testRow = $result->fetch_assoc())
+	        	{
+	        		$testTypes[$testRow["type"]][] = $testRow;
+	        	}
+	        	$newArray = array_keys($testTypes);
+				foreach($newArray as $key)
+				{
+	        		$marks = 0;
+					$row = $testTypes[$key][0];
+					for($col = 0; $col < sizeof($testTypes[$key]); $col++)
+					{
+						$this->Ln(6);
+						$this->Cell(28);
+						$this->SetFont('Arial', 'B', 11);
+						if($col == 0)
+							$this->Cell(15, 6,$row["type"], 0, 0, 'C');
+						else
+							$this->Cell(15, 6,"", 0, 0, 'C');
+						$this->Cell(15, 6,$row["qno"], 1, 0, 'C');
+						$this->SetFont('Arial', '', 10);
+						$marks += $row["ru"] + $row["ak"] + $row["an"] + $row["de"] + $row["ao"];
+						$this->Cell(25, 6, $row["ru"], 1, 0, 'C');
+						$this->Cell(23, 6, $row["ak"], 1, 0, 'C');
+						$this->Cell(17, 6, $row["an"], 1, 0, 'C');
+						$this->Cell(16, 6, $row["de"], 1, 0, 'C');
+						$this->Cell(22, 6, $row["ao"], 1, 0, 'C');
+						$this->Cell(18, 6, $marks, 1, 0, 'C');
+	        			
+					}
+					$this->Ln(0);
+					$x=$this->GetX()+28;
+					$y=$this->GetY()+6;
+					$this->Line($x, $y, $x+150, $y);
+					$this->Line($x, $starty, $x, $y);
+					$this->Line($x+15, $starty, $x+15, $y);
+	        	}
+	        	$this->Ln(8);
+				$x=$this->GetX()+12;
+				$y=$this->GetY();
+				$this->SetXY($x,$x-4);
+				$this->Line($topleftX, $topY, $x, $y);
+				$this->Line($topleftX+14, $topY, $x+14, $y);
+				$this->Line($topleftX+169, $topY, $x+169, $y);
+				$this->Line($x, $y, $x+169, $y);
+				$this->SetXY($x,$y);
+	        }
+		}
+	}
+
+	function auditOfSEE($conn, $row)
+	{
+		$sql = "SELECT * FROM see where coursecode = ? and section = ? and year = ?";
+ 
+		//$this->Cell(150, 8, $sql,1, 0, 'C');
+		//$this->Cell(150, 8, $row["coursecode"],1, 1, 'L');
+
+        if($stmt = mysqli_prepare($conn, $sql))
+        {
+	        // Bind variables to the prepared statement as parameters
+	        mysqli_stmt_bind_param($stmt, "ssd", $row["coursecode"], $row["section"], $row["year"]);
+	        mysqli_stmt_execute($stmt);
+	        $result = mysqli_stmt_get_result($stmt);
+	        //echo mysqli_num_rows($result);
+	        if(mysqli_num_rows($result) > 0)
+	        {
+	        	//To push to next page if not sufficient space
+				$space_left = $this->page_height -($this->GetY()+$this->bottom_margin);
+	        	if($this->height_of_cell > $space_left)
+	        	{	$this->AddPage();
+	        		$this->Cell(12);
+	        	}
+	        	
+	        	//section header
+	        	$this->SetFont('Arial', 'B', 11);
+				$this->Cell(14, 6, $this->letterCnt++, 1, 0, 'C');
+				$this->Cell(155,6,"Micro-level Audit of SEE Question Paper", 1, 1, 'L');
+				$this->Cell(12);
+				$topleftX = $this->GetX();
+				$topY = $this->GetY();
+        		$this->Ln(2);
+				$this->Cell(28);
+				$this->SetFont('Arial', 'B', 11);
+				$x=$this->GetX();
+				$y=$this->GetY();
+				$this->MultiCell(15, 6, "                        \t", 1);
+				//$this->Cell(50, 8, $lectureRow["remarks"], 1, 0, 'C');
+				$this->SetXY($x+15,$y);
+				
+				$x=$this->GetX();
+				$y=$this->GetY();
+				$this->MultiCell(15, 6, "                        \t", 1);
+				//$this->Cell(50, 8, $lectureRow["remarks"], 1, 0, 'C');
+				$this->SetXY($x+15,$y);
+				
+				$x=$this->GetX();
+				$y=$this->GetY();
+				$this->MultiCell(25, 6, "Remember/ Understand", 1);
+				//$this->Cell(50, 8, $lectureRow["remarks"], 1, 0, 'C');
+				$this->SetXY($x+25,$y);
+				$x=$this->GetX();
+				$y=$this->GetY();
+				$this->MultiCell(23, 6, "Apply/ Knowledge", 1);
+				$this->SetXY($x+23,$y);
+
+				$x=$this->GetX();
+				$y=$this->GetY();
+				$this->MultiCell(17, 6, "Analyze\t", 1);
+				$this->SetXY($x+17,$y);
+				$x=$this->GetX();
+				$y=$this->GetY();
+				$this->MultiCell(16, 6, "Design\t", 1);
+				$this->SetXY($x+16,$y);
+				$x=$this->GetX();
+				$y=$this->GetY();
+				$this->MultiCell(22, 6, "Any other (Specify)", 1);
+				$this->SetXY($x+22,$y);
+								
+				$x=$this->GetX();
+				$y=$this->GetY();
+				$this->MultiCell(18, 6, "Total Marks", 1);
+				$this->SetXY($x+18,$y+6);
+				$testTypes = array();
+
+				$starty=$this->GetY();
+				
+				$cnt = 0;
+				while($row = $result->fetch_assoc())
+	        	{
+	        		$marks = 0;
+					$this->Ln(6);
+					$this->Cell(28);
+					$this->SetFont('Arial', 'B', 11);
+					if($cnt == 0)
+					{
+						$this->Cell(15, 6,"SEE", 0, 0, 'C');
+						$cnt++;
+					}
+					else
+						$this->Cell(15, 6," ", 0, 0, 'C');
+					$this->Cell(15, 6,$row["qno"], 1, 0, 'C');
+					$this->SetFont('Arial', '', 10);
+					$marks += $row["ru"] + $row["ak"] + $row["an"] + $row["de"] + $row["ao"];
+					$this->Cell(25, 6, $row["ru"], 1, 0, 'C');
+					$this->Cell(23, 6, $row["ak"], 1, 0, 'C');
+					$this->Cell(17, 6, $row["an"], 1, 0, 'C');
+					$this->Cell(16, 6, $row["de"], 1, 0, 'C');
+					$this->Cell(22, 6, $row["ao"], 1, 0, 'C');
+					$this->Cell(18, 6, $marks, 1, 0, 'C');
+	        			
+					
+					$this->Ln(0);
+				}
+				$x=$this->GetX()+28;
+				$y=$this->GetY()+6;
+				$this->Line($x, $starty, $x, $y);
+				$this->Line($x+15, $starty, $x+15, $y);
+	        	$this->Line($x, $y, $x+150, $y);
+	        	$this->Ln(8);
+				$x=$this->GetX()+12;
+				$y=$this->GetY();
+				$this->SetXY($x,$x-4);
+				$this->Line($topleftX, $topY, $x, $y);
+				$this->Line($topleftX+14, $topY, $x+14, $y);
+				$this->Line($topleftX+169, $topY, $x+169, $y);
+				$this->Line($x, $y, $x+169, $y);
+				$this->SetXY($x,$y);
+	        }
+		}
+	}
+
+	function attainment($conn, $row)
+	{
+		$sql = "SELECT * FROM attainment where coursecode = ? and section = ? and year = ?";
+ 
+		//$this->Cell(150, 8, $sql,1, 0, 'C');
+		//$this->Cell(150, 8, $row["coursecode"],1, 1, 'L');
+
+        if($stmt = mysqli_prepare($conn, $sql))
+        {
+	        // Bind variables to the prepared statement as parameters
+	        mysqli_stmt_bind_param($stmt, "ssd", $row["coursecode"], $row["section"], $row["year"]);
+	        mysqli_stmt_execute($stmt);
+	        $result = mysqli_stmt_get_result($stmt);
+	        //echo mysqli_num_rows($result);
+	        if(mysqli_num_rows($result) > 0)
+	        {
+	        	//To push to next page if not sufficient space
+				$space_left = $this->page_height -($this->GetY()+$this->bottom_margin);
+	        	if($this->height_of_cell > $space_left)
+	        	{	$this->AddPage();
+	        		$this->Cell(12);
+	        	}
+	        	
+	        	//section header
+	        	$this->SetFont('Arial', 'B', 11);
+				$this->Cell(14, 6, $this->letterCnt++, 1, 0, 'C');
+				$this->Cell(155,6,"CO Attainment", 1, 1, 'L');
+				$this->Cell(12);
+				$topleftX = $this->GetX();
+				$topY = $this->GetY();
+        		
+        		$this->Ln(2);
+				$this->Cell(28);
+				$this->SetFont('Arial', 'B', 11);
+				$x=$this->GetX();
+				$y=$this->GetY();
+				$this->MultiCell(15, 6, "  CO#          \t\t    ", 1, "C");
+				$this->SetXY($x+15,$y);
+				
+				$x=$this->GetX();
+				$y=$this->GetY();
+				$this->MultiCell(25, 6, "Attainment CAYm1", 1, "C");
+				//$this->Cell(50, 8, $lectureRow["remarks"], 1, 0, 'C');
+				$this->SetXY($x+25,$y);
+				
+				$x=$this->GetX();
+				$y=$this->GetY();
+				$this->MultiCell(25, 6, "Attainment CAY", 1, "C");
+				//$this->Cell(50, 8, $lectureRow["remarks"], 1, 0, 'C');
+				$this->SetXY($x+25,$y);
+				$x=$this->GetX();
+				$y=$this->GetY();
+				$this->MultiCell(25, 6, " Target Set   ", 1, "C");
+				$this->SetXY($x+25,$y);
+
+				$x=$this->GetX();
+				$y=$this->GetY();
+				$this->MultiCell(61, 6, "\t\t\t\t\t\t\t            Remarks\t\t\t\t\t                     ", 1, "C");
+				$this->SetXY($x+61,$y+6);
+				
+				$starty=$this->GetY();
+				while($row = $result->fetch_assoc())
+	        	{
+	        		$marks = 0;
+					$this->Ln(6);
+					$this->Cell(28);
+					$this->SetFont('Arial', 'B', 11);
+					$this->Cell(15, 6,$row["co"], 1, 0, 'C');
+					$this->SetFont('Arial', '', 10);
+					$this->Cell(25, 6, $row["caym1"], 1, 0, 'C');
+					$this->Cell(25, 6, $row["cay"], 1, 0, 'C');
+					$this->Cell(25, 6, $row["target"], 1, 0, 'C');
+					$this->Cell(61, 6, $row["remark"], 1, 0, 'C');
+					$this->Ln(0);
+				}
+				$x=$this->GetX()+28;
+				$y=$this->GetY()+6;
+				//$this->Line($x, $starty, $x, $y);
+				//$this->Line($x+15, $starty, $x+15, $y);
+	        	//$this->Line($x, $y, $x+150, $y);
+	        	$this->Ln(8);
+				$x=$this->GetX()+12;
+				$y=$this->GetY();
+				$this->SetXY($x,$x-4);
+				$this->Line($topleftX, $topY, $x, $y);
+				$this->Line($topleftX+14, $topY, $x+14, $y);
+				$this->Line($topleftX+169, $topY, $x+169, $y);
+				$this->Line($x, $y, $x+169, $y);
+				$this->SetXY($x,$y);
+	        }
+		}
+	}
+	
+
 	function table($conn, $row)
 	{
 		$this->COsection($conn, $row);
@@ -982,7 +1329,9 @@ class PDF extends FPDF
 		$this->Laboratory($conn, $row);
 		$this->SelfStudy($conn, $row);
 		$this->Survey($conn, $row);
-			
+		$this->auditOfAssesTools($conn, $row);
+		$this->auditOfSEE($conn, $row);
+		$this->attainment($conn, $row);
 	}
 
 	function Page1($conn, $row)

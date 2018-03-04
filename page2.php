@@ -1,39 +1,60 @@
-<?php
-/**
- * The template for displaying all pages
- *
- * This is the template that displays all pages by default.
- * Please note that this is the WordPress construct of pages
- * and that other 'pages' on your WordPress site may use a
- * different template.
- *
- * @link https://codex.wordpress.org/Template_Hierarchy
- *
- * @package WordPress
- * @subpackage Twenty_Seventeen
- * @since 1.0
- * @version 1.0
- TEMPLATE NAME:page2
- */
-?>
-<b style="margin-left:350px;">Select the faculty</b><br><br>
-			<select name="" style="margin-left:350px;">
-				<option>data to be fetched from db</option>
-				<option>a</option>
-				<option>b</option>
-			</select><br><br>
 
-	<select name="" style="margin-left:350px;">
-				<option>data to be fetched from db</option>
-				<option>a</option>
-				<option>b</option>
-			</select><br><br>
-	<select name="" style="margin-left:350px;">
-				<option>data to be fetched from db</option>
-				<option>a</option>
-				<option>b</option>
-			</select><br><br><br><br><br>
-<form action ="" method="post">
+<style>
+	select{
+		margin-left:350px;
+	}
+</style>
+		<?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "bmsce";
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+$sql1="select coursecode from entry";
+$res=mysqli_query($conn,$sql1);
+
+
+echo '<select name="coursecode">';
+while($row=mysqli_fetch_array($res)){
+	echo '<option value="'.$row['coursecode'].'">'.$row['coursecode'].'</option>';
+}
+echo '</select>';
+echo '<br><br>';
+
+
+$sql2="select section from entry";
+$res=mysqli_query($conn,$sql2);
+
+
+echo '<select name="section">';
+while($row=mysqli_fetch_array($res)){
+	echo '<option value="'.$row['section'].'">'.$row['section'].'</option>';
+}
+echo '</select>';
+echo '<br><br>';
+
+
+$sql3="select year from entry";
+$res=mysqli_query($conn,$sql3);
+
+
+echo '<select name="year">';
+while($row=mysqli_fetch_array($res)){
+	echo '<option value="'.$row['year'].'">'.$row['year'].'</option>';
+}
+echo '</select>';
+echo '<br><br>';
+		if(isset($_POST["subsuggestion"])){
+
+			 $sql="INSERT INTO survey VALUES('"."','"."',0,'".$_POST["suggestion"]."','".$_POST["actions"]."','".$_POST["summary"]."');";
+if ($conn->query($sql)){
+	echo "successful inserted";
+}
+			}?>
 	
 
 <table>
@@ -468,7 +489,3 @@ if ($conn->query($sql)){
 	echo "successful inserted";
 }
 			}?>
-
-
-<?php
-?>
