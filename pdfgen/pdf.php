@@ -35,7 +35,7 @@ class PDF extends FPDF
 		// Arial italic 8
 		$this->SetFont('Arial','I',8);
 		// Page number
-		$this->Cell(0,10,'Page '.$this->PageNo().'/{nb}',0,0,'C');
+		//$this->Cell(0,10,'Page '.$this->PageNo().'/{nb}',0,0,'C');
 	}
 	function AuditHeader()
 	{
@@ -558,29 +558,41 @@ class PDF extends FPDF
 				$this->Cell(60, 6, "Topic", 1, 0, 'C');
 				$this->MultiCell(50, 6, "Remarks", 1);
 				//$this->Ln(8);
-						
+				$firstRowY = $this->GetY();
 				while($lectureRow = $result->fetch_assoc()) 
 			    {
 			    	$this->Ln(0);
 					$this->Cell(28);
 					$this->SetFont('Arial', 'B', 11);
-					$this->Cell(20, 6, $lectureRow["lno"], 1, 0, 'C');
-					$this->Cell(20, 6, $lectureRow["uno"], 1, 0, 'C');
+					$x = $this->GetX();
+					$y = $this->GetY();
+					$this->MultiCell(20, 6, $lectureRow["lno"], 0, 'C');
+					$this->setXY($x+20,$y);
+					$x = $this->GetX();
+					$y = $this->GetY();
+					$this->MultiCell(20, 6, $lectureRow["uno"], 0, 'C');
+					$this->setXY($x+20,$y);
 					$this->SetFont('Arial', '', 10);
 					$x=$this->GetX();
 					$y=$this->GetY();
-					$this->MultiCell(60, 6, $lectureRow["topic"], 1);
+					$this->MultiCell(60, 6, $lectureRow["topic"], 0);
 					$row3Y=$this->GetY();
 					//$this->Cell(50, 8, $lectureRow["remarks"], 1, 0, 'C');
 					$this->SetXY($x+60,$y);
-					$this->MultiCell(50, 6, $lectureRow["remarks"], 1);
+					$this->MultiCell(50, 6, $lectureRow["remarks"], 0);
 					$x=$this->GetX();
 					$row4Y=$this->GetY();
 					$maxY = $this->max($row3Y, $row4Y);
 					$this->SetXY($x, $maxY);
+					$this->Line($x+28, $maxY, $x+178, $maxY);
 					//$this->SetFont('Arial', '', 9);
 					//$this->MultiCell(130, 8, $lectureRow["co{$rowCnt}"],1);
 				}
+				$this->Line($x+28, $firstRowY, $x+28, $maxY);
+				$this->Line($x+20+28, $firstRowY, $x+20+28, $maxY);
+				$this->Line($x+40+28, $firstRowY, $x+40+28, $maxY);
+				$this->Line($x+100+28, $firstRowY, $x+100+28, $maxY);
+				$this->Line($x+150+28, $firstRowY, $x+150+28, $maxY);
 				$this->Ln(0);
 				$x=$this->GetX()+12;
 				$y=$maxY;
@@ -645,29 +657,42 @@ class PDF extends FPDF
 				$this->Cell(60, 6, "Topic", 1, 0, 'C');
 				$this->MultiCell(50, 6, "Remarks/Skill Addressed", 1);
 				//$this->Ln(8);
-						
+					
+				$firstRowY = $this->getY();	
 				while($tutorialRow = $result->fetch_assoc()) 
 			    {
 			    	$this->Ln(0);
 					$this->Cell(28);
 					$this->SetFont('Arial', 'B', 11);
-					$this->Cell(20, 6, $tutorialRow["tno"], 1, 0, 'C');
-					$this->Cell(20, 6, $tutorialRow["uno"], 1, 0, 'C');
+					$x = $this->GetX();
+					$y = $this->GetY();
+					$this->MultiCell(20, 6, $tutorialRow["tno"], 0, 'C');
+					$this->setXY($x+20,$y);
+					$x = $this->GetX();
+					$y = $this->GetY();
+					$this->MultiCell(20, 6, $tutorialRow["uno"], 0, 'C');
+					$this->setXY($x+20,$y);
 					$this->SetFont('Arial', '', 10);
 					$x=$this->GetX();
 					$y=$this->GetY();
-					$this->MultiCell(60, 6, $tutorialRow["topic"], 1);
+					$this->MultiCell(60, 6, $tutorialRow["topic"], 0);
 					$row3Y=$this->GetY();
 					//$this->Cell(50, 8, $lectureRow["remarks"], 1, 0, 'C');
 					$this->SetXY($x+60,$y);
-					$this->MultiCell(50, 6, $tutorialRow["remarks"], 1);
+					$this->MultiCell(50, 6, $tutorialRow["remarks"], 0);
 					$x=$this->GetX();
 					$row4Y=$this->GetY();
 					$maxY = $this->max($row3Y, $row4Y);
 					$this->SetXY($x, $maxY);
+					$this->Line($x+28, $maxY, $x+178, $maxY);
 					//$this->SetFont('Arial', '', 9);
 					//$this->MultiCell(130, 8, $lectureRow["co{$rowCnt}"],1);
 				}
+				$this->Line($x+28, $firstRowY, $x+28, $maxY);
+				$this->Line($x+20+28, $firstRowY, $x+20+28, $maxY);
+				$this->Line($x+40+28, $firstRowY, $x+40+28, $maxY);
+				$this->Line($x+100+28, $firstRowY, $x+100+28, $maxY);
+				$this->Line($x+150+28, $firstRowY, $x+150+28, $maxY);
 				$this->Ln(0);
 				$x=$this->GetX()+12;
 				$y=$maxY;
@@ -716,10 +741,7 @@ class PDF extends FPDF
 				$this->Cell(12);
 
 				$topleftX = $this->GetX();
-				$topY = $this->GetY();
-				$this->Cell(14, 12 + 6*$noOfLabs,"",0,0);
-				$this->Cell(155, 12 + 6*$noOfLabs,"",0,0);
-				
+				$topY = $this->GetY();				
 				
 				$this->Ln(2);
 				$this->Cell(28);
@@ -729,29 +751,42 @@ class PDF extends FPDF
 				$this->Cell(55, 6, "Topic", 1, 0, 'C');
 				$this->MultiCell(50, 6, "Remarks/Skill Addressed", 1);
 				//$this->Ln(8);
-						
+				$firstRowY = $this->GetY();
 				while($labRow = $result->fetch_assoc()) 
 			    {
 			    	$this->Ln(0);
 					$this->Cell(28);
 					$this->SetFont('Arial', 'B', 11);
-					$this->Cell(25, 6, $labRow["lno"], 1, 0, 'C');
-					$this->Cell(20, 6, $labRow["uno"], 1, 0, 'C');
+					$x = $this->GetX();
+					$y = $this->GetY();
+					$this->MultiCell(25, 6, $labRow["lno"], 0, 'C');
+					$this->setXY($x+25,$y);
+					$x = $this->GetX();
+					$y = $this->GetY();
+					$this->MultiCell(20, 6, $labRow["uno"], 0, 'C');
+					$this->setXY($x+20,$y);
 					$this->SetFont('Arial', '', 10);
 					$x=$this->GetX();
 					$y=$this->GetY();
-					$this->MultiCell(55, 6, $labRow["name"], 1);
+					$this->MultiCell(55, 6, $labRow["name"], 0);
 					$row3Y=$this->GetY();
 					//$this->Cell(50, 8, $lectureRow["remarks"], 1, 0, 'C');
 					$this->SetXY($x+55,$y);
-					$this->MultiCell(50, 6, $labRow["remarks"], 1);
+					$this->MultiCell(50, 6, $labRow["remarks"], 0);
 					$x=$this->GetX();
 					$row4Y=$this->GetY();
 					$maxY = $this->max($row3Y, $row4Y);
 					$this->SetXY($x, $maxY);
+					$this->Line($x+28, $maxY, $x+178, $maxY);
 					//$this->SetFont('Arial', '', 9);
 					//$this->MultiCell(130, 8, $lectureRow["co{$rowCnt}"],1);
 				}
+				$this->Line($x+28, $firstRowY, $x+28, $maxY);
+				$this->Line($x+25+28, $firstRowY, $x+25+28, $maxY);
+				$this->Line($x+45+28, $firstRowY, $x+45+28, $maxY);
+				$this->Line($x+100+28, $firstRowY, $x+100+28, $maxY);
+				$this->Line($x+150+28, $firstRowY, $x+150+28, $maxY);
+				$this->Ln(0);
 				$this->Ln(0);
 				$x=$this->GetX()+12;
 				$y=$maxY;
@@ -1317,6 +1352,141 @@ class PDF extends FPDF
 		}
 	}
 	
+	function innovation($conn, $row)
+	{
+		$sql = "SELECT * FROM innovation where coursecode = ? and section = ? and year = ?";
+ 
+		//$this->Cell(150, 8, $sql,1, 0, 'C');
+		//$this->Cell(150, 8, $row["coursecode"],1, 1, 'L');
+
+        if($stmt = mysqli_prepare($conn, $sql))
+        {
+	        // Bind variables to the prepared statement as parameters
+	        mysqli_stmt_bind_param($stmt, "ssd", $row["coursecode"], $row["section"], $row["year"]);
+	        mysqli_stmt_execute($stmt);
+	        $result = mysqli_stmt_get_result($stmt);
+	        //echo mysqli_num_rows($result);
+	        if(mysqli_num_rows($result) > 0)
+	        {
+	        	//To push to next page if not sufficient space
+				$space_left = $this->page_height -($this->GetY()+$this->bottom_margin);
+	        	if($this->height_of_cell > $space_left)
+	        	{	$this->AddPage();
+	        		$this->Cell(12);
+	        	}
+	        	
+	        	//section header
+	        	$this->SetFont('Arial', 'B', 11);
+				$this->Cell(14, 6, $this->letterCnt++, 1, 0, 'C');
+				$this->Cell(155,6,"Innovation in TLP/Best Practices adopted (delivery/assessment)", 1, 1, 'L');
+				$this->Cell(12);
+				$topleftX = $this->GetX();
+				$topY = $this->GetY();
+        		
+        		$this->Ln(2);
+				$this->Cell(28);
+				$this->SetFont('Arial', 'B', 11);
+				$this->Cell(85, 6, "Innovation", 1, 0, "C");
+				$this->Cell(51, 6, "Remarks", 1, 0, "C");
+				//$this->SetXY($x+,$y+6);
+				
+				$starty=$this->GetY();
+
+				$this->Ln(6);
+	        	while($row = $result->fetch_assoc())
+	        	{
+	        		$this->Ln(0);
+	        		$this->Cell(28);
+					$this->SetFont('Arial', '', 10);
+					$x=$this->GetX();
+					$y=$this->GetY();
+					$this->MultiCell(85, 6, $row["Innovation"], 0, 'C');
+					$yinnov = $this->getY();
+					$this->SetXY($x+85, $y);
+					$x=$this->GetX();
+					$y=$this->GetY();
+					$this->MultiCell(51, 6, $row["Remark"], 0, 'C');
+					$yrem = $this->getY();
+					$maxy = $this->max($yinnov, $yrem);
+					$this->SetXY($x, $maxy);
+					$this->Line($x, $starty, $x, $maxy);
+	        		$this->Line($x+51, $starty, $x+51, $maxy);
+	        		$this->Line($x-85, $starty, $x-85, $maxy);
+	        		$this->Line($x-85, $maxy, $x+51, $maxy);
+				}
+				$x=$this->GetX()+28;
+				$y=$this->GetY()+6;
+				//$this->Line($x, $starty, $x, $y);
+				//$this->Line($x+15, $starty, $x+15, $y);
+	        	//$this->Line($x, $y, $x+150, $y);
+	        	$this->Ln(2);
+				$x=$this->GetX()+12;
+				$y=$this->GetY();
+				$this->SetXY($x,$x-4);
+				$this->Line($topleftX, $topY, $x, $y);
+				$this->Line($topleftX+14, $topY, $x+14, $y);
+				$this->Line($topleftX+169, $topY, $x+169, $y);
+				$this->Line($x, $y, $x+169, $y);
+				$this->SetXY($x,$y);
+	        }
+		}
+	}
+
+	function signature($conn, $row)
+	{
+		//To push to next page if not sufficient space
+		$space_left = $this->page_height -($this->GetY()+$this->bottom_margin);
+	    if($this->height_of_cell > $space_left)
+	    {	
+	    	$this->AddPage();
+	        $this->Cell(12);
+	    }
+	    $this->SetFont('Arial', '', 10);
+		$this->Ln(12);
+	    $this->Cell(25);
+		$this->Cell(51, 6, "Signature of Faculty(s)", 0, 0, "C");
+	 	$this->Cell(45);
+	 	$this->Cell(51, 6, "Signature of HOD", 0, 0, "C");
+		$this->Ln(6);
+	    $this->Cell(51, 6, "Date", 0, 0, "C");		   
+	}
+
+
+	function note($conn, $row)
+	{
+		//To push to next page if not sufficient space
+		$space_left = $this->page_height -($this->GetY()+$this->bottom_margin);
+	    if($this->height_of_cell > $space_left)
+	    {	
+	    	$this->AddPage();
+	        $this->Cell(12);
+	    }
+	    $this->SetFont('Arial', 'B', 10);
+		$this->Ln(12);
+	    $this->Cell(51, 6, "Note", 0, 1, "C");
+	 	$this->SetFont('Arial', '', 10);
+	    $this->Cell(30);
+		$this->Cell(51, 6, "(i)The Course plan is an attempt to ensure ", 0, 0, "L");
+	 	$this->SetFont('Arial', 'B', 10);
+		$this->Cell(16);
+		$this->Cell(37, 6, "continuous improvement", 0, 0, "L");
+		$this->SetFont('Arial', '', 10);
+		$this->Cell(51, 6, "in the TLP of the course", 0, 1, "C");
+		$this->Cell(30);
+		$this->Cell(51, 6, "(ii)Calander of Events and detailed schedule included. ", 0, 0, "L");
+	 
+	 	$this->SetFont('Arial', 'B', 10);
+		$this->Ln(12);
+		$this->Cell(15);
+	    $this->Cell(51, 6, "Annexures to be included", 0, 1, "C");
+	 	$this->SetFont('Arial', '', 10);
+	 	$this->Cell(30);
+	 	$this->Cell(51, 6, "(i)All the THREE Internal Question Papers", 0, 1, "L");
+		$this->Cell(30);
+		$this->Cell(51, 6, "(ii)Quiz Papers/others ", 0, 1, "L");
+	 	$this->Cell(30);
+	 	$this->Cell(51, 6, "(ii)SEE Question Paper ", 0, 1, "L");
+	}
 
 	function table($conn, $row)
 	{
@@ -1332,6 +1502,10 @@ class PDF extends FPDF
 		$this->auditOfAssesTools($conn, $row);
 		$this->auditOfSEE($conn, $row);
 		$this->attainment($conn, $row);
+		$this->innovation($conn, $row);
+		$this->signature($conn, $row);
+		$this->note($conn, $row);
+				
 	}
 
 	function Page1($conn, $row)
